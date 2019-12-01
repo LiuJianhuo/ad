@@ -1,16 +1,11 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Home from '../views/Home.vue'
 import AdDetail from '../views/AdDetail'
+import Taskdetail from '../views/taskdetail'
 
 Vue.use(VueRouter)
 
 const routes = [
-  {
-    path: '/',
-    name: 'home',
-    component: Home
-  },
   {
     path: '/about',
     name: 'about',
@@ -22,6 +17,10 @@ const routes = [
   {
     path: '/addetail',
     component: AdDetail
+  },
+  {
+    path: '/taskdetail',
+    component: Taskdetail
   }
 ]
 
