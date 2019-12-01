@@ -2,6 +2,7 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
 import AdDetail from '../views/AdDetail'
+import AdTask from '../views/AdTask'
 
 Vue.use(VueRouter)
 
@@ -22,6 +23,10 @@ const routes = [
   {
     path: '/addetail',
     component: AdDetail
+  },
+  {
+    path: '/adtask',
+    component: AdTask
   }
 ]
 

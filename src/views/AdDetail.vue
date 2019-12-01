@@ -2,19 +2,19 @@
     <div class="page">
       <mt-header title="任务详情"></mt-header>
         <div class="avatar circle">
-          <img :src="logo"/>
+          <img :src="adBgImg"/>
         </div>
     </div>
 </template>
 
 <script>
-import logo from '@/assets/logo.png'
+import adBgImg from '@/assets/wd_bg.png'
 
 export default {
   name: 'AdDetail',
   data: function () {
     return {
-      logo
+      adBgImg
     }
   }
 }
