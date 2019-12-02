@@ -10,10 +10,10 @@
     <ul class="step-list">
       <li class="step" v-for="(step, index) in steps" :key="index">
         <div class="step-content" v-if="index % 2 === 0">
-          <div class="placeholder circle" ><img :src="step.icon"/></div>
+          <div><img class="placeholder circle" :src="step.icon"/></div>
           <div class="step-inf">{{step.title}}</div>
         </div>
-        <div v-else class="step-arrow"><img :src="arrowPng"/></div>
+        <div v-else class="step-arrow"><img  class="step-arrow" :src="arrowPng"/></div>
       </li>
     </ul>
   </div>
@@ -97,7 +97,6 @@ ul li {
   position: relative;
   height: 30px;
   width: 30px;
-  background-color: aqua;
 }
 
 .circle {
@@ -127,6 +126,10 @@ ul li {
 .step-arrow {
   font-size: 14px;
   box-sizing: border-box;
+  width:18px;
+  height:5px;
+  display: block;
+  transform: translateY(-50%)
 }
 
 .close {

@@ -133,8 +133,10 @@ export default {
       this.$refs.loadmore.onTopLoaded()
       if (this.activedTabContainer === 'deliveringAd') {
         this.getAdList()
+        this.$el.querySelector('#deliveringAd').scrollTop = 0
       } else {
         this.getJoinedAdList()
+        this.$el.querySelector('#participatedAd').scrollTop = 0
       }
     },
     withDraw () {
