@@ -3,13 +3,13 @@
     <div class="row ad-item__title">
       {{ item.title }}
     </div>
-    <div class="row">
+    <div class="row" style="height: 20px">
       <div class="ad-item__billing-type">
         {{ item.billingType }}
       </div>
-      <Tooltip content="item.fefefef" :isShow="false">
-        <div class="ad-item__billing-tip">
-          <img :src="questionIcon" class="ad-item__tip-icon" alt=""><!-- <div class="ad-item__tip-icon circle"></div> -->
+      <Tooltip :content="item.context" v-model="show" class="" >
+        <div class="ad-item__billing-tip tip-btn" @click="hanlderTip">
+          <img :src="questionIcon" id="btn" class="ad-item__billing-tip ad-item__tip-icon" alt=""/>
         </div>
       </Tooltip>
       <div class="ad-item__unit-price">单价：{{ item.unitPrice }}</div>
@@ -17,8 +17,9 @@
     <div class="row ad-operation-row">
       <div class="ad-item__release-time">发布时间: {{ item.releaseTime }}</div>
       <div class="ad-item__operater">
-        <a class="ad-item__operater-btn look-detail">查看详情</a>
-        <a class="ad-item__operater-btn attend-task">参与任务</a>
+        <!-- <a class="ad-item__operater-btn look-detail">查看详情</a> -->
+        <router-link to="/addetail" class="ad-item__operater-btn look-detail">查看详情</router-link>
+        <a class="ad-item__operater-btn attend-task" @click="handleAttendTask(item.advertiseId)">参与任务</a>
       </div>
     </div>
   </li>
@@ -43,20 +44,29 @@ export default {
     return {
       cundex: 0,
       activedIndex: 0,
-      questionIcon
+      questionIcon,
+      showTip: false,
+      show: false
     }
   },
   methods: {
-    changeItem: function (index) {
-      if (this.activedIndex === index) return
-      this.activedIndex = index
-      this.$emit('selected', index)
+    handleAttendTask: function (advertiseId) {
+      this.$emit('participateInAdTask', advertiseId) // 参与任务
+    },
+    hanlderTip: function (e) {
+      console.log(e)
+      let b = this.$el.querySelector('#tooltip')
+      console.log(b.classList.add('show'))
     }
   }
 }
 </script>
 
 <style  scoped>
+a {
+  text-decoration: none;
+}
+
 .ad-item {
   display: block;
   padding: 12px 8px;
@@ -94,7 +104,7 @@ export default {
   position: relative;
   display: flex;
   align-items: center;
-  padding-bottom: 8px;
+  margin-bottom: 8px;
 }
 
 .ad-item__billing-tip {
@@ -104,7 +114,7 @@ export default {
   justify-content: center;
 }
 
-.ad-item__tip-icon {
+.ad-item__billing-tip .tip-btn, .ad-item__tip-icon {
   display: inline-block;
   width:12px;
   height:12px;
@@ -145,14 +155,15 @@ export default {
   align-items: center;
   justify-content: center;
   margin-right: 8px;
+  text-decoration: none;
 }
 
-.ad-item__operater-btn .look-detail {
+.ad-item__operater-btn.attend-task {
   margin-right: 0px;
 }
 
-.ad-operation-row {
-  height: 25px;
+.row.ad-operation-row {
+  margin-bottom: 0px;
   padding: 8px 0px;
 }
 </style>

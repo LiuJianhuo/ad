@@ -24,14 +24,14 @@
       </div>
       <div class="pg-body">
         <AdNav :items="['正在发布', '已参与']" @selected="handlerNavChange"></AdNav>
-        <ul v-if="activedNavIndex !== 0" class="ad-list scrollbar-hidden">
-          <AdTaskItem :item="item"></AdTaskItem>
-          <AdTaskItem :item="item"></AdTaskItem>
-          <AdTaskItem :item="item"></AdTaskItem>
-          <AdTaskItem :item="item"></AdTaskItem>
-          <AdTaskItem :item="item"></AdTaskItem>
-          <AdTaskItem :item="item"></AdTaskItem>
-          <AdTaskItem :item="item"></AdTaskItem>
+        <ul v-if="activedNavIndex === 0" class="ad-list scrollbar-hidden">
+          <AdTaskItem :item="item" @participateInAdTask="handlerParcipateInTask"></AdTaskItem>
+          <AdTaskItem :item="item" @participateInAdTask="handlerParcipateInTask"></AdTaskItem>
+          <AdTaskItem :item="item" @participateInAdTask="handlerParcipateInTask"></AdTaskItem>
+          <AdTaskItem :item="item" @participateInAdTask="handlerParcipateInTask"></AdTaskItem>
+          <AdTaskItem :item="item" @participateInAdTask="handlerParcipateInTask"></AdTaskItem>
+          <AdTaskItem :item="item" @participateInAdTask="handlerParcipateInTask"></AdTaskItem>
+          <AdTaskItem :item="item" @participateInAdTask="handlerParcipateInTask"></AdTaskItem>
         </ul>
         <ul v-else class="ad-list ad-participated-list scrollbar-hidden">
           <AdParticipatedTaskItem :item="item"></AdParticipatedTaskItem>
@@ -44,6 +44,7 @@
       </div>
       <AdMask :show="showMask"></AdMask>
       <AdParticipationType :show='showParticipationTypeModal' @close='handlerClose'> </AdParticipationType>
+      <AdSharePopup v-model="showSharePopup"> </AdSharePopup>
     </div>
 </template>
 
@@ -56,6 +57,7 @@ import AdTaskItem from '@/components/AdTaskItem.vue'
 import AdMask from '@/components/AdMask.vue'
 import AdParticipationType from '@/components/AdParticipationType.vue'
 import AdParticipatedTaskItem from '@/components/AdParticipatedTaskItem.vue'
+import AdSharePopup from '@/components/AdSharePopup.vue'
 
 export default {
   name: 'AdTask',
@@ -64,7 +66,8 @@ export default {
     AdTaskItem,
     AdMask,
     AdParticipationType,
-    AdParticipatedTaskItem
+    AdParticipatedTaskItem,
+    AdSharePopup
   },
   data: function () {
     return {
@@ -78,7 +81,7 @@ export default {
         advertiseId: 1,
         title: '1纷纷 纷纷金额飞机飞机i而非姐夫姐夫二级分解金额iejeifjeif titelfefefefefe',
         unitPrice: '0.00',
-        context: '123',
+        context: '指分享出去的任务中链接被点击的次数来计算佣金ffffff',
         billingString: '指分享出去的任务中链接被点击的次数来计算佣金',
         billingType: '计费方式：按点击计费',
         releaseTime: '2019-09-23 16:15:31',
@@ -88,7 +91,7 @@ export default {
         advertiseId: 1,
         title: '机i而非姐夫姐夫二级分解金额iejeifjeif titelfefefefefe',
         unitPrice: '0.00',
-        context: '123',
+        context: '1fefef2指分享出去的任务中链接被点击的次数来计算佣金指分享出去的任务中链接被点击的次数来计算佣金3',
         billingString: '指分享出去的任务中链接被点击的次数来计算佣金',
         billingType: '计费方式：按点击计费',
         releaseTime: '2019-09-23 16:15:31',
@@ -96,7 +99,9 @@ export default {
       },
       activedNavIndex: 0,
       showMask: false,
-      showParticipationTypeModal: false
+      showParticipationTypeModal: false,
+      showSharePopup: false,
+      s: true
     }
   },
   methods: {
@@ -114,9 +119,12 @@ export default {
       this.showParticipationTypeModal = false
       this.showMask = false
     },
-    handlerParticipationType: function () {
+    handlerParticipationType: function () { // 参与方式
       this.showMask = true
       this.showParticipationTypeModal = true
+    },
+    handlerParcipateInTask: function () {
+      this.showSharePopup = true
     }
   }
 }
@@ -186,7 +194,7 @@ export default {
 
 .avatar img {
   display: block;
-  vertical-align: middle;
+  /* vertical-align: middle; */
   height: 100%;
 }
 

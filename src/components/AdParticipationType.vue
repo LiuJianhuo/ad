@@ -11,7 +11,7 @@
       <li class="step" v-for="(step, index) in steps" :key="index">
         <div class="step-content" v-if="index % 2 === 0">
           <div class="placeholder circle" ></div>
-          <div class="step-inf">分分分</div>
+          <div class="step-inf">{{step}}</div>
         </div>
         <div v-else class="step-arrow">></div>
       </li>
@@ -30,7 +30,7 @@ export default {
   },
   data: function () {
     return {
-      steps: [1, 2, 3, 4, 5]
+      steps: ['点击参与任务', 2, '分享至微信', 4, '根据计费规则赚钱佣金']
     }
   }
 }

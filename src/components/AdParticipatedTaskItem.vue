@@ -16,7 +16,8 @@
     <div class="row ad-operation-row">
       <div class="ad-item__release-time">发布时间: {{ item.releaseTime }}</div>
       <div class="ad-item__operater">
-        <a class="ad-item__operater-btn look-detail">查看详情</a>
+        <!-- <a class="ad-item__operater-btn look-detail">查看详情</a> -->
+        <router-link to="/addetail" class="ad-item__operater-btn look-detail">查看详情</router-link>
       </div>
     </div>
   </li>
@@ -49,6 +50,10 @@ export default {
 </script>
 
 <style  scoped>
+a {
+  text-decoration: none;
+}
+
 .ad-item {
   display: block;
   padding: 3px 5px;
@@ -87,7 +92,7 @@ export default {
   position: relative;
   display: flex;
   align-items: center;
-  padding-bottom: 8px;
+  margin-bottom: 8px;
 }
 
 .ad-item__billing-tip {
@@ -144,7 +149,12 @@ export default {
 }
 
 .ad-operation-row {
-  height: 25px;
+  padding-bottom: 0px;
+  padding: 2px 0px;
+}
+
+.row.ad-operation-row {
+  margin-bottom: 0px;
   padding: 8px 0px;
 }
 
