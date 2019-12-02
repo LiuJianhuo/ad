@@ -5,21 +5,21 @@
     </div>
     <div class="row" style="height: 20px">
       <div class="ad-item__billing-type">
-        {{ item.billingType }}
+        计费方式：{{ billingTypeName }}
       </div>
-      <Tooltip :content="item.context" v-model="show" class="" >
+      <Tooltip :content="item.billingString" v-model="show" class="" >
         <div class="ad-item__billing-tip tip-btn" @click="hanlderTip">
           <img :src="questionIcon" id="btn" class="ad-item__billing-tip ad-item__tip-icon" alt=""/>
         </div>
       </Tooltip>
-      <div class="ad-item__unit-price">单价：{{ item.unitPrice }}</div>
+      <div class="ad-item__unit-price">单价：￥{{ item.unitPrice }}</div>
     </div>
     <div class="row ad-operation-row">
       <div class="ad-item__release-time">发布时间: {{ item.releaseTime }}</div>
       <div class="ad-item__operater">
-        <!-- <a class="ad-item__operater-btn look-detail">查看详情</a> -->
-        <router-link to="/addetail" class="ad-item__operater-btn look-detail">查看详情</router-link>
-        <a class="ad-item__operater-btn attend-task" @click="handleAttendTask(item.advertiseId)">参与任务</a>
+        <button class="ad-item__operater-btn look-detail" @click="handleLookDetail">查看详情</button>
+        <!-- <router-link :to="item.link" class="ad-item__operater-btn look-detail">查看详情</router-link> -->
+        <a class="ad-item__operater-btn attend-task" @click="handleAttendTask(item)">参与任务</a>
       </div>
     </div>
   </li>
@@ -49,14 +49,22 @@ export default {
       show: false
     }
   },
+  computed: {
+    billingTypeName () {
+      return this.billingType === 0 ? 'CPM按展示计费' : 'CPC按点击计费'
+    }
+  },
   methods: {
-    handleAttendTask: function (advertiseId) {
-      this.$emit('participateInAdTask', advertiseId) // 参与任务
+    handleAttendTask: function (item) {
+      this.$emit('participateInAdTask', item) // 参与任务
     },
     hanlderTip: function (e) {
       console.log(e)
       let b = this.$el.querySelector('#tooltip')
       console.log(b.classList.add('show'))
+    },
+    handleLookDetail () {
+      window.location.href = this.item.link
     }
   }
 }
@@ -156,6 +164,7 @@ a {
   justify-content: center;
   margin-right: 8px;
   text-decoration: none;
+  outline: none;
 }
 
 .ad-item__operater-btn.attend-task {

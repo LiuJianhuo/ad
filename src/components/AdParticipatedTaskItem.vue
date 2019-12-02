@@ -5,19 +5,19 @@
     </div>
     <div class="row">
       <div class="ad-item__billing-type">
-        {{ item.billingType }}
+        计费方式：{{ billingTypeName }}
       </div>
-      <div class="ad-item__status">状态：{{ item.unitPrice }}</div>
+      <div class="ad-item__status">状态：{{ statusName }}</div>
     </div>
     <div class="row">
-      <div class="ad-item__unit-price">单价：{{ item.unitPrice }}</div>
-      <div class="ad-item__expect-price">预计收入：{{ item.expectPrice }}</div>
+      <div class="ad-item__unit-price">单价：￥{{ item.unitPrice }}</div>
+      <div class="ad-item__expect-price">预计收入：￥{{ item.expectPrice }}</div>
     </div>
     <div class="row ad-operation-row">
-      <div class="ad-item__release-time">发布时间: {{ item.releaseTime }}</div>
+      <div class="ad-item__release-time">发布时间: {{ item.gmtCreate }}</div>
       <div class="ad-item__operater">
-        <!-- <a class="ad-item__operater-btn look-detail">查看详情</a> -->
-        <router-link to="/addetail" class="ad-item__operater-btn look-detail">查看详情</router-link>
+        <button class="ad-item__operater-btn look-detail" @click="hanldeLookDetail">查看详情</button>
+        <!-- <router-link to="/addetail" class="ad-item__operater-btn look-detail">查看详情</router-link> -->
       </div>
     </div>
   </li>
@@ -39,11 +39,23 @@ export default {
       activedIndex: 0
     }
   },
+  computed: {
+    billingTypeName () {
+      return this.billingType === 0 ? 'CPM按展示计费' : 'CPC按点击计费'
+    },
+    statusName () {
+      // 0待发布 1发布中 2已下线
+      return this.status === 0 ? '待发布' : (this.status === 1 ? '发布中' : '已下线')
+    }
+  },
   methods: {
     changeItem: function (index) {
       if (this.activedIndex === index) return
       this.activedIndex = index
       this.$emit('selected', index)
+    },
+    hanldeLookDetail () {
+      window.location.href = this.item.link
     }
   }
 }
@@ -142,6 +154,7 @@ a {
   display: flex;
   align-items: center;
   justify-content: center;
+  outline: none;
 }
 
 .ad-item__operater-btn .look-detail {

@@ -10,16 +10,21 @@
     <ul class="step-list">
       <li class="step" v-for="(step, index) in steps" :key="index">
         <div class="step-content" v-if="index % 2 === 0">
-          <div class="placeholder circle" ></div>
-          <div class="step-inf">{{step}}</div>
+          <div class="placeholder circle" ><img :src="step.icon"/></div>
+          <div class="step-inf">{{step.title}}</div>
         </div>
-        <div v-else class="step-arrow">></div>
+        <div v-else class="step-arrow"><img :src="arrowPng"/></div>
       </li>
     </ul>
   </div>
 </template>
 
 <script>
+import renWuPng from '@/assets/renwu@3x.png'
+import wxPng from '@/assets/WeChat@3x.png'
+import jinbiPng from '@/assets/jinbi@3x.png'
+import arrowPng from '@/assets/jiantou.png'
+
 export default {
   name: 'AdParticipationType',
   props: {
@@ -30,7 +35,14 @@ export default {
   },
   data: function () {
     return {
-      steps: ['点击参与任务', 2, '分享至微信', 4, '根据计费规则赚钱佣金']
+      steps: [
+        { icon: renWuPng, title: '点击参与任务' },
+        {},
+        { icon: wxPng, title: '分享至微信' },
+        {},
+        { icon: jinbiPng, title: '根据计费规则赚钱佣金' }
+      ],
+      arrowPng
     }
   }
 }

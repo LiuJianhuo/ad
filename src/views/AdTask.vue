@@ -6,7 +6,7 @@
           <div class="acc-item">
             <span class="acc-label">账号余额(元)</span>
             <span class="acc-amount">{{amount}}</span>
-            <button class="acc-castout" >提现</button>
+            <button class="acc-castout" @click="withDraw">提现</button>
           </div>
         </div>
       </div>
@@ -23,24 +23,22 @@
         </div>
       </div>
       <div class="pg-body">
-        <AdNav :items="['正在发布', '已参与']" @selected="handlerNavChange"></AdNav>
-        <ul v-if="activedNavIndex === 0" class="ad-list scrollbar-hidden">
-          <AdTaskItem :item="item" @participateInAdTask="handlerParcipateInTask"></AdTaskItem>
-          <AdTaskItem :item="item" @participateInAdTask="handlerParcipateInTask"></AdTaskItem>
-          <AdTaskItem :item="item" @participateInAdTask="handlerParcipateInTask"></AdTaskItem>
-          <AdTaskItem :item="item" @participateInAdTask="handlerParcipateInTask"></AdTaskItem>
-          <AdTaskItem :item="item" @participateInAdTask="handlerParcipateInTask"></AdTaskItem>
-          <AdTaskItem :item="item" @participateInAdTask="handlerParcipateInTask"></AdTaskItem>
-          <AdTaskItem :item="item" @participateInAdTask="handlerParcipateInTask"></AdTaskItem>
-        </ul>
-        <ul v-else class="ad-list ad-participated-list scrollbar-hidden">
-          <AdParticipatedTaskItem :item="item"></AdParticipatedTaskItem>
-          <AdParticipatedTaskItem :item="item"></AdParticipatedTaskItem>
-          <AdParticipatedTaskItem :item="item"></AdParticipatedTaskItem>
-          <AdParticipatedTaskItem :item="item"></AdParticipatedTaskItem>
-          <AdParticipatedTaskItem :item="item"></AdParticipatedTaskItem>
-          <AdParticipatedTaskItem :item="item"></AdParticipatedTaskItem>
-        </ul>
+        <AdNav :items="['正在发布', '已参与']" @selected="handlerTabChange"></AdNav>
+        <mt-loadmore :top-method="loadTop" ref="loadmore" :distanceIndex="1" :topDistance="30">
+          <mt-tab-container v-model="activedTabContainer">
+            <ul class="ad-list scrollbar-hidden" id="deliveringAd">
+              <AdTaskItem v-for="item in adList" :key="item.advertiseId" :item='item' @participateInAdTask='handlerParcipateInTask'></AdTaskItem>
+            </ul>
+            <mt-tab-container-item id="participatedAd">
+              <ul class="ad-list ad-participated-list scrollbar-hidden" id="participatedAd">
+                <AdParticipatedTaskItem v-for="item in joinedAdList" :key="item.advertiseId" :item='item'></AdParticipatedTaskItem>
+              </ul>
+            </mt-tab-container-item>
+          </mt-tab-container>
+          <div slot="top" class="mint-loadmore-top">
+            <mt-spinner type="fading-circle"></mt-spinner>
+          </div>
+        </mt-loadmore>
       </div>
       <AdMask :show="showMask"></AdMask>
       <AdParticipationType :show='showParticipationTypeModal' @close='handlerClose'> </AdParticipationType>
@@ -77,43 +75,30 @@ export default {
       remark: '青春献给小酒桌ff分解附件二覅姐二ffffffffffffffffffffffffffffefefeffefe',
       amount: 49862.22,
       taskOpers: [],
-      item: {
-        advertiseId: 1,
-        title: '1纷纷 纷纷金额飞机飞机i而非姐夫姐夫二级分解金额iejeifjeif titelfefefefefe',
-        unitPrice: '0.00',
-        context: '指分享出去的任务中链接被点击的次数来计算佣金ffffff',
-        billingString: '指分享出去的任务中链接被点击的次数来计算佣金',
-        billingType: '计费方式：按点击计费',
-        releaseTime: '2019-09-23 16:15:31',
-        link: ''
-      },
-      item1: {
-        advertiseId: 1,
-        title: '机i而非姐夫姐夫二级分解金额iejeifjeif titelfefefefefe',
-        unitPrice: '0.00',
-        context: '1fefef2指分享出去的任务中链接被点击的次数来计算佣金指分享出去的任务中链接被点击的次数来计算佣金3',
-        billingString: '指分享出去的任务中链接被点击的次数来计算佣金',
-        billingType: '计费方式：按点击计费',
-        releaseTime: '2019-09-23 16:15:31',
-        link: ''
-      },
+      adList: [],
+      joinedAdList: [],
       activedNavIndex: 0,
       showMask: false,
       showParticipationTypeModal: false,
       showSharePopup: false,
-      s: true
+      s: true,
+      activedTabContainer: 'deliveringAd'
     }
+  },
+  created () {
+    this.getAdList()
+    this.getJoinedAdList()
   },
   methods: {
     goBack: function () {
       this.$router.go(-1)
     },
     selected: function () {
-
+      // fefef
     },
-    handlerNavChange: function (index) {
+    handlerTabChange: function (index) {
       console.log(index) // 拉取数据
-      this.activedNavIndex = index
+      this.activedTabContainer = index === 0 ? 'deliveringAd' : 'participatedAd'
     },
     handlerClose: function () {
       this.showParticipationTypeModal = false
@@ -125,6 +110,54 @@ export default {
     },
     handlerParcipateInTask: function () {
       this.showSharePopup = true
+    },
+    getAdList: function () {
+      this.$axios({
+        method: 'post',
+        url: 'api/advertise/list',
+        data: {
+        }
+      }).then(res => {
+        const data = res.data
+        if (data.code === 200 && data.success === true) {
+          const content = data.content
+          if (content) {
+            this.adList = content.list
+          }
+        }
+      }).catch(error => {
+        console.log(error)
+      })
+    },
+    loadTop () {
+      this.$refs.loadmore.onTopLoaded()
+      if (this.activedTabContainer === 'deliveringAd') {
+        this.getAdList()
+      } else {
+        this.getJoinedAdList()
+      }
+    },
+    withDraw () {
+      window.location.href = 'https:apps.apple.com/cn/app/%E8%9C%9C%E8%9C%82%E5%97%A1%E5%97%A1/id1477434055'
+    },
+    getJoinedAdList: function () {
+      // api/advertise/join
+      this.$axios({
+        method: 'post',
+        url: 'api/advertise/join',
+        data: {
+        }
+      }).then(res => {
+        const data = res.data
+        if (data.code === 200 && data.success === true) {
+          const content = data.content
+          if (content) {
+            this.joinedAdList = content.list
+          }
+        }
+      }).catch(error => {
+        console.log(error)
+      })
     }
   }
 }
@@ -335,4 +368,8 @@ ul li {
   display: none;
 }
 
+.mint-loadmore-top {
+  display: flex;
+  justify-content: center;
+}
 </style>
