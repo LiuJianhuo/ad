@@ -60,18 +60,12 @@ export default {
     },
     hide (e) {
       let tooltip = this.$el.querySelector('#tooltip')
-      tooltip.classList.remove('show')
+      if (!e.target.classList['show']) {
+        tooltip.classList.remove('show')
+      }
     }
   },
   mounted () {
-    // for (let vc of this.$children) {
-    //   const el = vc.$el
-    //   el.addEventListener('click', this.show)
-    //   el.addEventListener('mouseenter', this.show)
-    //   el.addEventListener('mouseleave', this.hide)
-    //   el.addEventListener('touchstart', this.show)
-    //   el.addEventListener('touchmove', this.hide)
-    // }
     window.addEventListener('touchstart', this.hide)
   },
   beforeDestroy () {

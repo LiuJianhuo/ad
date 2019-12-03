@@ -24,7 +24,8 @@
       </div>
       <div class="pg-body">
         <AdNav :items="['正在发布', '已参与']" @selected="handlerTabChange"></AdNav>
-        <mt-loadmore :top-method="loadTop" ref="loadmore" :distanceIndex="1" :topDistance="30">
+        <!-- <mt-loadmore :top-method="loadTop" ref="loadmore" :distanceIndex="1" :topDistance="30"> -->
+        <LoadMore v-model="canPullDown" ref="loadmore" @loading='loading'>
           <mt-tab-container v-model="activedTabContainer">
             <ul class="ad-list scrollbar-hidden" id="deliveringAd">
               <AdTaskItem v-for="item in adList" :key="item.advertiseId" :item='item' @participateInAdTask='handlerParcipateInTask'></AdTaskItem>
@@ -38,7 +39,8 @@
           <div slot="top" class="mint-loadmore-top">
             <mt-spinner type="fading-circle"></mt-spinner>
           </div>
-        </mt-loadmore>
+        </LoadMore>
+        <!-- </mt-loadmore> -->
       </div>
       <AdMask :show="showMask"></AdMask>
       <AdParticipationType :show='showParticipationTypeModal' @close='handlerClose'> </AdParticipationType>
@@ -56,6 +58,8 @@ import AdMask from '@/components/AdMask.vue'
 import AdParticipationType from '@/components/AdParticipationType.vue'
 import AdParticipatedTaskItem from '@/components/AdParticipatedTaskItem.vue'
 import AdSharePopup from '@/components/AdSharePopup.vue'
+import LoadMore from '@/components/LoadMore.vue'
+import { Toast } from 'mint-ui'
 
 export default {
   name: 'AdTask',
@@ -65,7 +69,8 @@ export default {
     AdMask,
     AdParticipationType,
     AdParticipatedTaskItem,
-    AdSharePopup
+    AdSharePopup,
+    LoadMore
   },
   data: function () {
     return {
@@ -82,19 +87,48 @@ export default {
       showParticipationTypeModal: false,
       showSharePopup: false,
       s: true,
-      activedTabContainer: 'deliveringAd'
+      activedTabContainer: 'deliveringAd',
+      canPullDown: true,
+      rr: 'null'
     }
+  },
+  mounted () {
+    this.$el.querySelector('#deliveringAd').addEventListener('scroll', this.handlerListScroll)
+    this.$el.querySelector('#participatedAd').addEventListener('scroll', this.handlerListScroll)
+  },
+  destroyed () {
+    this.$el.querySelector('#deliveringAd').removeEventListener('scroll', this.handlerListScroll)
+    this.$el.querySelector('#participatedAd').removeEventListener('scroll', this.handlerListScroll)
   },
   created () {
     this.getAdList()
     this.getJoinedAdList()
   },
+  watch: {
+    activedTabContainer () {
+      this.$el.querySelector('#deliveringAd').scrollTop = 0
+      this.$el.querySelector('#participatedAd').scrollTop = 0
+      this.canPullDown = true
+      this.endLoading()
+    }
+  },
   methods: {
+    shareToWx () {
+      this.rr = window.AndroidJs.shareToWx()
+    },
     goBack: function () {
       this.$router.go(-1)
     },
     selected: function () {
       // fefef
+    },
+    handlerListScroll (e) {
+      let listNode = e.target
+      if (listNode.scrollTop > 0) {
+        this.canPullDown = false
+      } else {
+        this.canPullDown = true
+      }
     },
     handlerTabChange: function (index) {
       console.log(index) // 拉取数据
@@ -111,7 +145,7 @@ export default {
     handlerParcipateInTask: function () {
       this.showSharePopup = true
     },
-    getAdList: function () {
+    getAdList: function (reqFinishCb) {
       this.$axios({
         method: 'post',
         url: 'api/advertise/list',
@@ -125,24 +159,26 @@ export default {
             this.adList = content.list
           }
         }
+        this.callFunction(reqFinishCb)
       }).catch(error => {
-        console.log(error)
+        this.callFunction(reqFinishCb)
+        Toast(error.message)
       })
     },
-    loadTop () {
-      this.$refs.loadmore.onTopLoaded()
+    loading () {
       if (this.activedTabContainer === 'deliveringAd') {
-        this.getAdList()
-        this.$el.querySelector('#deliveringAd').scrollTop = 0
+        this.getAdList(this.endLoading)
       } else {
-        this.getJoinedAdList()
-        this.$el.querySelector('#participatedAd').scrollTop = 0
+        this.getJoinedAdList(this.endLoading)
       }
+    },
+    endLoading () {
+      this.$refs.loadmore.endLoading()
     },
     withDraw () {
       window.location.href = 'https:apps.apple.com/cn/app/%E8%9C%9C%E8%9C%82%E5%97%A1%E5%97%A1/id1477434055'
     },
-    getJoinedAdList: function () {
+    getJoinedAdList: function (reqFinishCb) {
       // api/advertise/join
       this.$axios({
         method: 'post',
@@ -157,9 +193,19 @@ export default {
             this.joinedAdList = content.list
           }
         }
+        this.callFunction(reqFinishCb)
       }).catch(error => {
         console.log(error)
+        this.callFunction(reqFinishCb)
       })
+    },
+    callFunction (reqFinishCb) {
+      if (reqFinishCb && typeof reqFinishCb === 'function') {
+        reqFinishCb()
+      }
+    },
+    openAblum () {
+      // fefe
     }
   }
 }
@@ -373,5 +419,11 @@ ul li {
 .mint-loadmore-top {
   display: flex;
   justify-content: center;
+}
+
+.mint-loadmore-top {
+  margin-top: -35px;
+  height: 35px;
+  line-height: 35px;
 }
 </style>
